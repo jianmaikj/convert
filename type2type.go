@@ -2,7 +2,9 @@ package convert
 
 import (
 	"encoding/json"
+	"reflect"
 	"strconv"
+	"unsafe"
 )
 
 func StrToInt(str string) (int, error) {
@@ -51,8 +53,7 @@ func Float32ToStr(num float32) string {
 	return strconv.FormatFloat(float64(num), 'f', -1, 64)
 }
 
-// Str
-// any type convert to string
+// Str any type convert to string
 func Str(value interface{}) string {
 	var key string
 	if value == nil {
@@ -106,4 +107,19 @@ func Str(value interface{}) string {
 	}
 
 	return key
+}
+
+// UnsafeString returns a string pointer without allocation
+func UnsafeString(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
+}
+
+// UnsafeBytes returns a byte pointer without allocation
+func UnsafeBytes(s string) (bs []byte) {
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh := (*reflect.SliceHeader)(unsafe.Pointer(&bs))
+	bh.Data = sh.Data
+	bh.Len = sh.Len
+	bh.Cap = sh.Len
+	return
 }
