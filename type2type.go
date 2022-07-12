@@ -59,7 +59,6 @@ func Str(value interface{}) string {
 	if value == nil {
 		return key
 	}
-
 	switch value.(type) {
 	case string:
 		key = value.(string)
@@ -101,6 +100,38 @@ func Str(value interface{}) string {
 		key = Uint64ToStr(it)
 	case []byte:
 		key = UnsafeString(value.([]byte))
+	default:
+		newValue, _ := json.Marshal(value)
+		key = UnsafeString(newValue)
+	}
+
+	return key
+}
+
+// ReflectValue2Str any type convert to string
+func ReflectValue2Str(value reflect.Value) string {
+	var key string
+
+	kind := value.Kind()
+	if kind == reflect.Ptr {
+		value = reflect.Indirect(value)
+		kind = value.Kind()
+	}
+	switch kind {
+	case reflect.String:
+		return value.String()
+	case reflect.Int, reflect.Int8, reflect.Int16,
+		reflect.Int32, reflect.Int64:
+		return strconv.FormatInt(value.Int(), 10)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16,
+		reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return strconv.FormatUint(value.Uint(), 10)
+	case reflect.Float32, reflect.Float64:
+		return strconv.FormatFloat(value.Float(), 'f', -1, 64)
+	case reflect.Bool:
+		return strconv.FormatBool(value.Bool())
+	case reflect.Invalid:
+		return ""
 	default:
 		newValue, _ := json.Marshal(value)
 		key = UnsafeString(newValue)
