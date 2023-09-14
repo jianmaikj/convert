@@ -8,12 +8,20 @@ import (
 )
 
 func StrToInt(str string) (int, error) {
-	res, err := strconv.Atoi(str)
-	return res, err
+	return strconv.Atoi(str)
 }
 func StrToInt64(str string) (int64, error) {
-	res, err := strconv.ParseInt(str, 10, 64)
-	return res, err
+	return strconv.ParseInt(str, 10, 64)
+}
+func StrToUint(str string) (uint, error) {
+	res, err := strconv.ParseUint(str, 10, 64)
+	return uint(res), err
+}
+func StrToUint64(str string) (uint64, error) {
+	return strconv.ParseUint(str, 10, 64)
+}
+func StrToFloat64(str string) (float64, error) {
+	return strconv.ParseFloat(str, 64)
 }
 
 func IntToStr(num int) string {
